@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     properties = db.relationship('Property', backref='owner', lazy=True)
     favorites = db.relationship('Favorite', backref='user', lazy=True)
-    messages = db.relationship('Message', backref='recipient', lazy=True)  # mensajes recibidos (si el vendedor es el propietario)
+  #  messages = db.relationship('Message', backref='recipient', lazy=True)  # mensajes recibidos (si el vendedor es el propietario)
     
     def set_password(self, password):
         self.password = generate_password_hash(password)
