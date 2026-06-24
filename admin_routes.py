@@ -16,7 +16,7 @@ def dashboard():
     recent_convs = Conversation.query.order_by(Conversation.created_at.desc()).limit(5).all()
     thirty_days = datetime.utcnow() - timedelta(days=30)
     new_props = Property.query.filter(Property.created_at >= thirty_days).count()
-    new_users = User.query.filter(User.created_at >= thirty_days, User.role == 'seller').count()
+    new_users = User.query.filter(User.created_at >= thirty_days, User.role != 'admin').count()
     new_msgs = Message.query.filter(Message.created_at >= thirty_days).count()
     return render_template('admin/dashboard.html', stats=stats, recent_properties=recent_props,
                            recent_convs=recent_convs, new_properties=new_props, new_users=new_users, new_messages=new_msgs)
@@ -40,6 +40,25 @@ def toggle_user(id):
     user.is_active = not user.is_active
     db.session.commit()
     flash(f'Usuario {"activado" if user.is_active else "desactivado"}.', 'success')
+    return redirect(url_for('admin.users'))
+
+@admin_bp.route('/user/<int:id>/role', methods=['POST'])
+@login_required
+@admin_required
+def change_user_role(id):
+    user = User.query.get_or_404(id)
+    new_role = request.form.get('role')
+    if new_role not in ('admin', 'seller', 'user'):
+        flash('Rol inválido.', 'danger')
+        return redirect(url_for('admin.users'))
+    if user.is_admin() and new_role != 'admin':
+        # No permitir quitar rol admin a sí mismo o a otro admin? Mejor permitir solo a otros.
+        if user.id == current_user.id:
+            flash('No puedes cambiar tu propio rol.', 'danger')
+            return redirect(url_for('admin.users'))
+    user.role = new_role
+    db.session.commit()
+    flash(f'Rol de {user.username} cambiado a {new_role}.', 'success')
     return redirect(url_for('admin.users'))
 
 @admin_bp.route('/user/<int:id>/plan', methods=['POST'])

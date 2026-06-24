@@ -28,7 +28,7 @@ def get_property_stats():
         'total_properties': Property.query.count(),
         'available_properties': Property.query.filter_by(status='Disponible').count(),
         'sold_properties': Property.query.filter_by(status='Vendida').count(),
-        'total_users': User.query.filter_by(role='seller').count(),
+        'total_users': User.query.filter(User.role != 'admin').count(),
         'total_messages': Message.query.count(),
         'unread_messages': Message.query.filter_by(is_read=False).count()
     }

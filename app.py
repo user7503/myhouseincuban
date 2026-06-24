@@ -91,7 +91,19 @@ def create_default_data():
         )
         db.session.add(seller)
 
+    # User demo (comprador)
+    if not User.query.filter_by(email='user@myhouseincuban.com').first():
+        user = User(
+            username='Usuario Demo',
+            email='user@myhouseincuban.com',
+            password=generate_password_hash('user123'),
+            role='user',
+            phone='+5355778899',
+            is_active=True,
+            plan_id=Plan.query.filter_by(name='Gratuito').first().id
+        )
+        db.session.add(user)
+
     db.session.commit()
 
 app = create_app()
-

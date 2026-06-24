@@ -78,6 +78,29 @@
 </div>
 {% endif %}
 
+{% if latest %}
+<div class="container mt-5">
+    <h2 class="mb-3"><i class="fas fa-clock"></i> Recientes</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for prop in latest %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename=prop.main_image or 'img/default-property.jpg') }}" class="card-img-top" style="height:180px; object-fit:cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ prop.title[:35] }}</h5>
+                    <p class="text-muted">{{ prop.city }}</p>
+                    <p class="fw-bold text-primary">${{ "%.2f"|format(prop.price) }} {{ prop.currency }}</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="{{ url_for('main.property_detail', id=prop.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <div class="bg-light mt-5 py-5">
     <div class="container text-center">
         <h2>¿Eres vendedor?</h2>

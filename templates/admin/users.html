@@ -3,7 +3,18 @@
 <h2>Usuarios</h2>
 <table class="table table-striped"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Plan</th><th>Estado</th><th>Acciones</th></tr></thead>
 <tbody>{% for u in users.items %}<tr>
-<td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td><span class="badge bg-info">{{ u.plan.name }}</span></td>
+<td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td>
+<td>
+    <form method="POST" action="{{ url_for('admin.change_user_role', id=u.id) }}" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <select name="role" onchange="this.form.submit()" class="form-select form-select-sm d-inline w-auto">
+            <option value="user" {% if u.role == 'user' %}selected{% endif %}>Usuario</option>
+            <option value="seller" {% if u.role == 'seller' %}selected{% endif %}>Vendedor</option>
+            <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+        </select>
+    </form>
+</td>
+<td><span class="badge bg-info">{{ u.plan.name }}</span></td>
 <td>{% if u.is_active %}✅{% else %}❌{% endif %}</td>
 <td>
     <form method="POST" action="{{ url_for('admin.toggle_user', id=u.id) }}" style="display:inline;"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-{% if u.is_active %}warning{% else %}success{% endif %}">{% if u.is_active %}Desactivar{% else %}Activar{% endif %}</button></form>

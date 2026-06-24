@@ -7,7 +7,8 @@ Plataforma profesional de venta de propiedades en Cuba.
 - Mensajería en tiempo real
 - Planes de suscripción (Free/Premium/Business)
 - Panel de administración completo
-- Búsqueda avanzada
+- Búsqueda avanzada con filtros colapsables
+- Tres roles: Admin, Vendedor, Usuario (comprador)
 - Diseño responsive
 
 ## Despliegue en Render

@@ -13,7 +13,7 @@ def admin_required(f):
 def seller_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role not in ['seller', 'admin']:
+        if not current_user.is_authenticated or not current_user.is_seller():
             abort(403)
         return f(*args, **kwargs)
     return decorated

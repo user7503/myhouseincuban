@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(20), default='seller')
+    role = db.Column(db.String(20), default='user')  # admin, seller, user
     phone = db.Column(db.String(20))
     avatar = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=True)
@@ -44,7 +44,12 @@ class User(UserMixin, db.Model):
     def is_admin(self):
         return self.role == 'admin'
 
+    def is_seller(self):
+        return self.role in ('seller', 'admin')
+
     def can_publish_more(self):
+        if not self.is_seller():
+            return False
         if self.plan.max_properties == 0:
             return True
         return self.properties_count < self.plan.max_properties

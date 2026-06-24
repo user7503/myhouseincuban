@@ -17,7 +17,11 @@
             <div class="card"><div class="card-body">
                 <h5>Plan: <span class="badge bg-info">{{ current_user.plan.name }}</span></h5>
                 <p>Propiedades: {{ current_user.properties_count }} / {{ current_user.plan.max_properties if current_user.plan.max_properties > 0 else 'Ilimitado' }}</p>
+                {% if current_user.is_seller() %}
                 <a href="{{ url_for('seller.plans') }}" class="btn btn-outline-primary btn-sm">Cambiar plan</a>
+                {% else %}
+                <p class="text-muted">Eres usuario comprador. Si deseas publicar, contacta al administrador.</p>
+                {% endif %}
             </div></div>
         </div>
     </div>

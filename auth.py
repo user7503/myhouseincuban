@@ -22,7 +22,10 @@ def login():
             flash(f'¡Bienvenido {user.username}!', 'success')
             if user.is_admin():
                 return redirect(url_for('admin.dashboard'))
-            return redirect(url_for('seller.dashboard'))
+            elif user.is_seller():
+                return redirect(url_for('seller.dashboard'))
+            else:
+                return redirect(url_for('main.index'))
         flash('Email o contraseña incorrectos.', 'danger')
     return render_template('auth/login.html')
 
@@ -50,7 +53,7 @@ def register():
             return redirect(url_for('auth.register'))
 
         user = User(username=username, email=email, password=generate_password_hash(password),
-                    phone=phone, role='seller', plan_id=plan_id)
+                    phone=phone, role='user', plan_id=plan_id)
         db.session.add(user)
         db.session.commit()
         flash('Registro exitoso. Ya puedes iniciar sesión.', 'success')
