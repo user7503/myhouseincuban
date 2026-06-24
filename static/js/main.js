@@ -1,5 +1,5 @@
+// Puedes añadir funcionalidad extra aquí
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-cerrar alertas
     setTimeout(function() {
         document.querySelectorAll('.alert').forEach(function(alert) {
             var bsAlert = new bootstrap.Alert(alert);

@@ -1,14 +1,11 @@
-/* Estilos modernos inspirados en Airbnb */
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f7f7; }
-.hero-section { min-height: 300px; display: flex; align-items: center; }
-.card { border: none; transition: transform 0.2s, box-shadow 0.2s; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+.card { border: none; transition: transform 0.2s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 .navbar { background-color: #ffffff !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .navbar-brand { font-weight: 700; }
-.btn-primary { background-color: #ff5a5f; border-color: #ff5a5f; }
-.btn-primary:hover { background-color: #e0484d; border-color: #e0484d; }
-.text-primary { color: #ff5a5f !important; }
-.bg-primary { background-color: #ff5a5f !important; }
-.list-group-item.active { background-color: #ff5a5f; border-color: #ff5a5f; }
-footer a { text-decoration: none; }
-footer a:hover { text-decoration: underline; }
+.btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
+.text-primary { color: #0d6efd !important; }
+.bg-primary { background-color: #0d6efd !important; }
+.message-bubble { max-width: 75%; border-radius: 15px; padding: 10px 15px; margin-bottom: 10px; }
+.bubble-sent { background-color: #0d6efd; color: white; margin-left: auto; }
+.bubble-received { background-color: #e9ecef; }

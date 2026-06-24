@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from models import User, db
+from models import User, db, Plan
 from werkzeug.security import generate_password_hash
-import re
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -17,7 +16,7 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             if not user.is_active:
-                flash('Cuenta desactivada. Contacta al administrador.', 'danger')
+                flash('Cuenta desactivada.', 'danger')
                 return redirect(url_for('auth.login'))
             login_user(user, remember=remember)
             flash(f'¡Bienvenido {user.username}!', 'success')
@@ -31,15 +30,17 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+    plans = Plan.query.all()
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
         confirm = request.form.get('confirm_password')
         phone = request.form.get('phone')
-        # Validaciones
+        plan_id = request.form.get('plan_id', 1, type=int)
+
         if User.query.filter_by(email=email).first():
-            flash('Este email ya está registrado.', 'danger')
+            flash('Email ya registrado.', 'danger')
             return redirect(url_for('auth.register'))
         if password != confirm:
             flash('Las contraseñas no coinciden.', 'danger')
@@ -47,12 +48,14 @@ def register():
         if len(password) < 6:
             flash('La contraseña debe tener al menos 6 caracteres.', 'danger')
             return redirect(url_for('auth.register'))
-        user = User(username=username, email=email, password=generate_password_hash(password), phone=phone, role='seller')
+
+        user = User(username=username, email=email, password=generate_password_hash(password),
+                    phone=phone, role='seller', plan_id=plan_id)
         db.session.add(user)
         db.session.commit()
         flash('Registro exitoso. Ya puedes iniciar sesión.', 'success')
         return redirect(url_for('auth.login'))
-    return render_template('auth/register.html')
+    return render_template('auth/register.html', plans=plans)
 
 @auth_bp.route('/logout')
 @login_required

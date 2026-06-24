@@ -1,17 +1,13 @@
-{% extends "base.html" %}
-{% block title %}Usuarios{% endblock %}
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
-        <div class="col-md-10">
-            <h2>Usuarios</h2>
-            <table class="table table-striped">
-                <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
-                <tbody>{% for u in users.items %}<tr><td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{% if u.is_active %}✅ Activo{% else %}❌ Inactivo{% endif %}</td><td><form method="POST" action="{{ url_for('admin.toggle_user', id=u.id) }}" style="display:inline;"><button class="btn btn-sm btn-{% if u.is_active %}warning{% else %}success{% endif %}">{% if u.is_active %}Desactivar{% else %}Activar{% endif %}</button></form></td></tr>{% endfor %}</tbody>
-            </table>
-            <nav>{% for p in users.iter_pages() %}{% if p %}<a href="{{ url_for('admin.users', page=p) }}" class="btn btn-sm btn-outline-primary">{{ p }}</a>{% endif %}{% endfor %}</nav>
-        </div>
-    </div>
-</div>
+{% extends "base.html" %}{% block title %}Usuarios{% endblock %}{% block content %}
+<div class="container-fluid mt-4"><div class="row"><div class="col-md-2">{% include 'admin/_sidebar.html' %}</div><div class="col-md-10">
+<h2>Usuarios</h2>
+<table class="table table-striped"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Plan</th><th>Estado</th><th>Acciones</th></tr></thead>
+<tbody>{% for u in users.items %}<tr>
+<td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td><span class="badge bg-info">{{ u.plan.name }}</span></td>
+<td>{% if u.is_active %}✅{% else %}❌{% endif %}</td>
+<td>
+    <form method="POST" action="{{ url_for('admin.toggle_user', id=u.id) }}" style="display:inline;"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-{% if u.is_active %}warning{% else %}success{% endif %}">{% if u.is_active %}Desactivar{% else %}Activar{% endif %}</button></form>
+    <form method="POST" action="{{ url_for('admin.change_user_plan', id=u.id) }}" style="display:inline;"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><select name="plan_id" onchange="this.form.submit()" class="form-select form-select-sm d-inline w-auto">{% for plan in Plan.query.all() %}<option value="{{ plan.id }}" {% if u.plan_id == plan.id %}selected{% endif %}>{{ plan.name }}</option>{% endfor %}</select></form>
+</td></tr>{% endfor %}</tbody></table>
+</div></div></div>
 {% endblock %}

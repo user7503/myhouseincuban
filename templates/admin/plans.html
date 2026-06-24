@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Planes{% endblock %}{% block content %}
+<div class="container-fluid mt-4"><div class="row"><div class="col-md-2">{% include 'admin/_sidebar.html' %}</div><div class="col-md-10">
+<h2>Planes</h2>
+<table class="table"><thead><tr><th>Nombre</th><th>Propiedades máx.</th><th>Precio/mes</th><th>Destacar</th><th>Acciones</th></tr></thead>
+<tbody>{% for plan in plans %}<tr><td>{{ plan.name }}</td><td>{{ plan.max_properties if plan.max_properties > 0 else 'Ilimitado' }}</td><td>${{ "%.2f"|format(plan.price_monthly) }}</td><td>{% if plan.can_feature %}✅{% else %}❌{% endif %}</td><td><a href="{{ url_for('admin.edit_plan', id=plan.id) }}" class="btn btn-sm btn-warning">Editar</a></td></tr>{% endfor %}</tbody></table>
+</div></div></div>
+{% endblock %}

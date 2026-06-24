@@ -1,20 +1,12 @@
-{% extends "base.html" %}
-{% block title %}Panel Vendedor{% endblock %}
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-2">{% include 'seller/_sidebar.html' %}</div>
-        <div class="col-md-10">
-            <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
-            <div class="row">
-                <div class="col-md-3"><div class="card text-white bg-primary"><div class="card-body"><h5>Total</h5><h3>{{ total }}</h3></div></div></div>
-                <div class="col-md-3"><div class="card text-white bg-success"><div class="card-body"><h5>Disponibles</h5><h3>{{ available }}</h3></div></div></div>
-                <div class="col-md-3"><div class="card text-white bg-warning"><div class="card-body"><h5>Vendidas</h5><h3>{{ sold }}</h3></div></div></div>
-                <div class="col-md-3"><div class="card text-white bg-danger"><div class="card-body"><h5>Mensajes no leídos</h5><h3>{{ unread_messages }}</h3></div></div></div>
-            </div>
-            <h5 class="mt-4">Últimas propiedades</h5>
-            <ul class="list-group">{% for p in recent %}<li class="list-group-item d-flex justify-content-between"><span>{{ p.title }}</span><span class="badge bg-secondary">{{ p.status }}</span></li>{% endfor %}</ul>
-        </div>
-    </div>
+{% extends "base.html" %}{% block title %}Panel Vendedor{% endblock %}{% block content %}
+<div class="container-fluid mt-4"><div class="row"><div class="col-md-2">{% include 'seller/_sidebar.html' %}</div><div class="col-md-10">
+<h2>Dashboard</h2>
+<div class="row">
+    <div class="col-md-3"><div class="card text-white bg-primary mb-3"><div class="card-body"><h5>Total</h5><h3>{{ total }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card text-white bg-success mb-3"><div class="card-body"><h5>Disponibles</h5><h3>{{ available }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card text-white bg-warning mb-3"><div class="card-body"><h5>Vendidas</h5><h3>{{ sold }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card text-white bg-danger mb-3"><div class="card-body"><h5>Mensajes no leídos</h5><h3>{{ unread_messages }}</h3></div></div></div>
 </div>
+<h5>Últimas propiedades</h5><ul class="list-group">{% for p in recent %}<li class="list-group-item d-flex justify-content-between"><span>{{ p.title }}</span><span class="badge bg-secondary">{{ p.status }}</span></li>{% endfor %}</ul>
+</div></div></div>
 {% endblock %}

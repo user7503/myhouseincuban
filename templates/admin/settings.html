@@ -1,19 +1,13 @@
-{% extends "base.html" %}
-{% block title %}Configuración{% endblock %}
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
-        <div class="col-md-10">
-            <h2>Configuración</h2>
-            <form method="POST">
-                <div class="mb-3"><label>Nombre del sitio</label><input type="text" name="site_name" class="form-control" value="{{ settings.site_name }}"></div>
-                <div class="mb-3"><label>Descripción</label><textarea name="site_description" class="form-control">{{ settings.site_description }}</textarea></div>
-                <div class="mb-3"><label>Email contacto</label><input type="email" name="contact_email" class="form-control" value="{{ settings.contact_email }}"></div>
-                <div class="mb-3"><label>Teléfono contacto</label><input type="text" name="contact_phone" class="form-control" value="{{ settings.contact_phone }}"></div>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </form>
-        </div>
-    </div>
-</div>
+{% extends "base.html" %}{% block title %}Configuración{% endblock %}{% block content %}
+<div class="container-fluid mt-4"><div class="row"><div class="col-md-2">{% include 'admin/_sidebar.html' %}</div><div class="col-md-10">
+<h2>Configuración</h2>
+<form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3"><label>Nombre del sitio</label><input type="text" name="site_name" class="form-control" value="{{ settings.site_name }}"></div>
+    <div class="mb-3"><label>Descripción</label><textarea name="site_description" class="form-control">{{ settings.site_description }}</textarea></div>
+    <div class="mb-3"><label>Email contacto</label><input type="email" name="contact_email" class="form-control" value="{{ settings.contact_email }}"></div>
+    <div class="mb-3"><label>Teléfono contacto</label><input type="text" name="contact_phone" class="form-control" value="{{ settings.contact_phone }}"></div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+</div></div></div>
 {% endblock %}

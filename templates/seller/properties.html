@@ -1,17 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Mis propiedades{% endblock %}
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-2">{% include 'seller/_sidebar.html' %}</div>
-        <div class="col-md-10">
-            <h2>Mis propiedades <a href="{{ url_for('seller.create_property') }}" class="btn btn-success btn-sm float-end"><i class="fas fa-plus"></i> Nueva</a></h2>
-            <table class="table table-striped">
-                <thead><tr><th>Título</th><th>Precio</th><th>Estado</th><th>Destacada</th><th>Acciones</th></tr></thead>
-                <tbody>{% for p in properties.items %}<tr><td>{{ p.title }}</td><td>${{ p.price }}</td><td>{{ p.status }}</td><td>{% if p.is_featured %}⭐{% endif %}</td><td><a href="{{ url_for('seller.edit_property', id=p.id) }}" class="btn btn-sm btn-warning">Editar</a><form method="POST" action="{{ url_for('seller.delete_property', id=p.id) }}" style="display:inline;" onsubmit="return confirm('¿Eliminar esta propiedad?')"><button class="btn btn-sm btn-danger">Eliminar</button></form></td></tr>{% endfor %}</tbody>
-            </table>
-            <nav>{% for p in properties.iter_pages() %}{% if p %}<a href="{{ url_for('seller.properties', page=p) }}" class="btn btn-sm btn-outline-primary">{{ p }}</a>{% endif %}{% endfor %}</nav>
-        </div>
-    </div>
-</div>
+{% extends "base.html" %}{% block title %}Mis propiedades{% endblock %}{% block content %}
+<div class="container-fluid mt-4"><div class="row"><div class="col-md-2">{% include 'seller/_sidebar.html' %}</div><div class="col-md-10">
+<h2>Mis propiedades <a href="{{ url_for('seller.create_property') }}" class="btn btn-success btn-sm float-end"><i class="fas fa-plus"></i> Nueva</a></h2>
+{% if not current_user.can_publish_more() %}<div class="alert alert-warning">Límite alcanzado. <a href="{{ url_for('seller.plans') }}">Actualizar plan</a></div>{% endif %}
+<table class="table table-striped"><thead><tr><th>Título</th><th>Precio</th><th>Estado</th><th>Destacada</th><th>Acciones</th></tr></thead>
+<tbody>{% for p in properties.items %}<tr>
+<td>{{ p.title }}</td><td>${{ p.price }}</td><td>{{ p.status }}</td><td>{% if p.is_featured %}⭐{% endif %}</td>
+<td>
+    <a href="{{ url_for('seller.edit_property', id=p.id) }}" class="btn btn-sm btn-warning">Editar</a>
+    <form method="POST" action="{{ url_for('seller.delete_property', id=p.id) }}" style="display:inline;" onsubmit="return confirm('¿Eliminar?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-danger">Eliminar</button></form>
+    <form method="POST" action="{{ url_for('seller.feature_property', id=p.id) }}" style="display:inline;"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-info">{% if p.is_featured %}Quitar dest.{% else %}Destacar{% endif %}</button></form>
+</td></tr>{% endfor %}</tbody></table>
+<nav>{% for p in properties.iter_pages() %}{% if p %}<a href="{{ url_for('seller.properties', page=p) }}" class="btn btn-sm btn-outline-primary">{{ p }}</a>{% endif %}{% endfor %}</nav>
+</div></div></div>
 {% endblock %}

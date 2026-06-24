@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Conversación{% endblock %}{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>{{ conversation.property.title }}</h2>
+        <a href="{{ url_for('main.messages_inbox') }}" class="btn btn-outline-secondary btn-sm">Volver</a>
+    </div>
+    <div class="card shadow-sm"><div class="card-body" style="max-height:500px; overflow-y:auto;">
+        {% for msg in conversation.messages %}
+        <div class="mb-3"><div class="message-bubble {% if msg.sender_id == current_user.id %}bubble-sent{% else %}bubble-received{% endif %}">
+            <p class="mb-1">{{ msg.message }}</p>
+            <small class="text-muted">{{ msg.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+        </div></div>
+        {% endfor %}
+    </div>
+    <div class="card-footer bg-white">
+        <form action="{{ url_for('main.send_message_in_conversation', conv_id=conversation.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="input-group"><input type="text" name="message" class="form-control" placeholder="Escribe..." required><button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button></div>
+        </form>
+    </div></div>
+</div>
+{% endblock %}

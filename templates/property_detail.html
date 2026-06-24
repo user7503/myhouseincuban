@@ -3,38 +3,39 @@
 {% block extra_css %}
 <style>
     .carousel-item img { height: 400px; object-fit: cover; }
-    .property-features i { width: 20px; }
+    .message-bubble { max-width: 75%; border-radius: 15px; padding: 10px 15px; }
+    .bubble-sent { background-color: #0d6efd; color: white; margin-left: auto; }
+    .bubble-received { background-color: #e9ecef; }
 </style>
 {% endblock %}
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8">
-            <!-- Carrusel -->
             <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     {% if images %}
                         {% for img in images %}
                         <div class="carousel-item {% if loop.first %}active{% endif %}">
-                            <img src="{{ url_for('static', filename=img) }}" class="d-block w-100" alt="Imagen">
+                            <img src="{{ url_for('static', filename=img) }}" class="d-block w-100">
                         </div>
                         {% endfor %}
                     {% else %}
                         <div class="carousel-item active">
-                            <img src="{{ url_for('static', filename='img/default-property.jpg') }}" class="d-block w-100" alt="Sin imagen">
+                            <img src="{{ url_for('static', filename='img/default-property.jpg') }}" class="d-block w-100">
                         </div>
                     {% endif %}
                 </div>
                 {% if images|length > 1 %}
                 <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="carousel-control-prev-icon"></span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="carousel-control-next-icon"></span>
                 </button>
                 {% endif %}
             </div>
-            
+
             <h2 class="mt-3">{{ property.title }}</h2>
             <p><i class="fas fa-map-marker-alt text-danger"></i> {{ property.city }}, {{ property.province }}</p>
             <div class="mb-2">
@@ -44,7 +45,7 @@
             </div>
             <h3 class="text-primary">${{ "%.2f"|format(property.price) }} {{ property.currency }}</h3>
             <p>{{ property.description }}</p>
-            
+
             <div class="row mt-4">
                 <div class="col-md-3"><i class="fas fa-bed"></i> {{ property.bedrooms }} hab.</div>
                 <div class="col-md-3"><i class="fas fa-bath"></i> {{ property.bathrooms }} baños</div>
@@ -58,7 +59,7 @@
                 <div class="col-md-3"><i class="fas fa-umbrella"></i> Terraza: {{ 'Sí' if property.has_terrace else 'No' }}</div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -67,19 +68,24 @@
                     <p><i class="fas fa-phone"></i> {{ property.contact_phone or property.owner.phone }}</p>
                     <p><i class="fas fa-envelope"></i> {{ property.contact_email or property.owner.email }}</p>
                     <hr>
-                    <form action="{{ url_for('main.contact') }}" method="POST">
-                        <input type="hidden" name="property_id" value="{{ property.id }}">
-                        <div class="mb-2"><input type="text" name="name" class="form-control" placeholder="Tu nombre" required></div>
-                        <div class="mb-2"><input type="email" name="email" class="form-control" placeholder="Tu email" required></div>
-                        <div class="mb-2"><input type="text" name="phone" class="form-control" placeholder="Teléfono (opcional)"></div>
-                        <div class="mb-2"><textarea name="message" class="form-control" rows="3" placeholder="Mensaje" required></textarea></div>
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-paper-plane"></i> Enviar mensaje</button>
-                    </form>
+                    {% if current_user.is_authenticated and current_user.id != property.user_id %}
+                        {% if conversation %}
+                            <a href="{{ url_for('main.view_conversation', conv_id=conversation.id) }}" class="btn btn-outline-primary w-100 mb-2">Ver conversación</a>
+                        {% else %}
+                            <form action="{{ url_for('main.start_conversation', property_id=property.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="mb-2"><textarea name="message" class="form-control" rows="2" placeholder="Escribe tu primer mensaje..." required></textarea></div>
+                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-paper-plane"></i> Enviar mensaje</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted"><a href="{{ url_for('auth.login') }}">Inicia sesión</a> para contactar.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-    
+
     {% if related %}
     <div class="row mt-5">
         <h4>Propiedades similares</h4>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Planes{% endblock %}{% block content %}
+<div class="container mt-4"><h2>Planes de suscripción</h2><div class="row">
+{% for plan in plans %}
+<div class="col-md-4"><div class="card {% if current_user.plan_id == plan.id %}border-primary{% endif %} mb-4 shadow-sm"><div class="card-body">
+    <h5 class="card-title">{{ plan.name }}</h5>
+    <p>Publica hasta {{ plan.max_properties if plan.max_properties > 0 else 'ilimitadas' }} propiedades.</p>
+    <p>Destacar: {{ 'Sí' if plan.can_feature else 'No' }}</p>
+    <h3 class="text-primary">${{ "%.2f"|format(plan.price_monthly) }} <small>/mes</small></h3>
+    {% if current_user.plan_id == plan.id %}
+        <button class="btn btn-secondary w-100" disabled>Plan actual</button>
+    {% else %}
+        <form method="POST" action="{{ url_for('seller.upgrade_plan', plan_id=plan.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="btn btn-primary w-100">Seleccionar</button></form>
+    {% endif %}
+</div></div></div>
+{% endfor %}
+</div></div>
+{% endblock %}

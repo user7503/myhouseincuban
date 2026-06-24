@@ -1,26 +1,13 @@
-{% extends "base.html" %}
-{% block title %}Iniciar sesión{% endblock %}
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h3 class="text-center mb-4"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</h3>
-                    <form method="POST">
-                        <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
-                        <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Contraseña" required></div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                            <label class="form-check-label" for="remember">Recordarme</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
-                    </form>
-                    <hr>
-                    <div class="text-center"><p>¿No tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate</a></p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% extends "base.html" %}{% block title %}Iniciar sesión{% endblock %}{% block content %}
+<div class="container mt-5"><div class="row justify-content-center"><div class="col-md-5"><div class="card shadow-sm"><div class="card-body">
+    <h3 class="text-center mb-4"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</h3>
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+        <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Contraseña" required></div>
+        <div class="mb-3 form-check"><input type="checkbox" name="remember" class="form-check-input" id="remember"><label class="form-check-label" for="remember">Recordarme</label></div>
+        <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+    </form>
+    <hr><div class="text-center"><p>¿No tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate</a></p></div>
+</div></div></div></div></div>
 {% endblock %}

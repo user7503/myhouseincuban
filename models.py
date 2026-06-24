@@ -5,6 +5,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
+class Plan(db.Model):
+    __tablename__ = 'plans'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    max_properties = db.Column(db.Integer, default=1)   # 0 = ilimitado
+    can_feature = db.Column(db.Boolean, default=False)
+    price_monthly = db.Column(db.Float, default=0)
+    users = db.relationship('User', backref='plan', lazy=True)
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -15,19 +24,30 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20))
     avatar = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=True)
+    plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'), default=1)
+    properties_count = db.Column(db.Integer, default=0)
+    subscription_expires = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
     properties = db.relationship('Property', backref='owner', lazy=True)
     favorites = db.relationship('Favorite', backref='user', lazy=True)
-  #  messages = db.relationship('Message', backref='recipient', lazy=True)  # mensajes recibidos (si el vendedor es el propietario)
-    
+    conversations_as_buyer = db.relationship('Conversation', foreign_keys='Conversation.buyer_id', backref='buyer', lazy=True)
+    conversations_as_seller = db.relationship('Conversation', foreign_keys='Conversation.seller_id', backref='seller', lazy=True)
+    property_views = db.relationship('PropertyView', backref='user', lazy=True)
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+
     def is_admin(self):
         return self.role == 'admin'
+
+    def can_publish_more(self):
+        if self.plan.max_properties == 0:
+            return True
+        return self.properties_count < self.plan.max_properties
 
 class Property(db.Model):
     __tablename__ = 'properties'
@@ -59,13 +79,16 @@ class Property(db.Model):
     main_image = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     is_featured = db.Column(db.Boolean, default=False)
+    featured_until = db.Column(db.DateTime)
     is_active = db.Column(db.Boolean, default=True)
     views = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     images = db.relationship('PropertyImage', backref='property', lazy=True, cascade='all, delete-orphan')
-    favorites = db.relationship('Favorite', backref='property', lazy=True)
-    messages = db.relationship('Message', backref='property', lazy=True)
+    favorites = db.relationship('Favorite', backref='property', lazy=True, cascade='all, delete-orphan')
+    conversations = db.relationship('Conversation', backref='property', lazy=True, cascade='all, delete-orphan')
+    views_log = db.relationship('PropertyView', backref='property', lazy=True, cascade='all, delete-orphan')
 
 class PropertyImage(db.Model):
     __tablename__ = 'property_images'
@@ -76,6 +99,13 @@ class PropertyImage(db.Model):
     order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class PropertyView(db.Model):
+    __tablename__ = 'property_views'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    property_id = db.Column(db.Integer, db.ForeignKey('properties.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 class Favorite(db.Model):
     __tablename__ = 'favorites'
     id = db.Column(db.Integer, primary_key=True)
@@ -84,20 +114,24 @@ class Favorite(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     __table_args__ = (db.UniqueConstraint('user_id', 'property_id', name='unique_favorite'),)
 
+class Conversation(db.Model):
+    __tablename__ = 'conversations'
+    id = db.Column(db.Integer, primary_key=True)
+    property_id = db.Column(db.Integer, db.ForeignKey('properties.id'), nullable=False)
+    buyer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    messages = db.relationship('Message', backref='conversation', lazy=True, cascade='all, delete-orphan')
+    __table_args__ = (db.UniqueConstraint('property_id', 'buyer_id', name='unique_conversation'),)
+
 class Message(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
-    property_id = db.Column(db.Integer, db.ForeignKey('properties.id'), nullable=False)
-    sender_name = db.Column(db.String(100), nullable=False)
-    sender_email = db.Column(db.String(120), nullable=False)
-    sender_phone = db.Column(db.String(20))
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversations.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    # Relación para saber a qué vendedor pertenece (a través de la propiedad)
-    @property
-    def recipient_id(self):
-        return self.property.user_id
 
 class SiteSettings(db.Model):
     __tablename__ = 'site_settings'

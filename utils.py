@@ -7,18 +7,13 @@ def save_image(form_image, folder='uploads', size=(800, 600)):
     upload_folder = os.path.join(current_app.root_path, 'static', folder)
     if not os.path.exists(upload_folder):
         os.makedirs(upload_folder, exist_ok=True)
-        os.chmod(upload_folder, 0o755)
-    
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_image.filename)
     image_fn = random_hex + f_ext
     image_path = os.path.join(upload_folder, image_fn)
-    
-    # Redimensionar y comprimir
     i = Image.open(form_image)
     i.thumbnail(size)
     i.save(image_path, optimize=True, quality=85)
-    
     return os.path.join(folder, image_fn)
 
 def delete_image(image_path):

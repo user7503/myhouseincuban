@@ -6,307 +6,52 @@
     <title>{% block title %}MyHouseinCuban{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #FF5A5F;
-            --primary-dark: #E04E53;
-            --secondary: #00A699;
-            --bg-light: #F7F7F7;
-            --text-dark: #222222;
-            --text-light: #717171;
-            --border-color: #DDDDDD;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* Navbar moderno */
-        .navbar-modern {
-            background: white !important;
-            padding: 16px 0;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-modern .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary) !important;
-            letter-spacing: -0.5px;
-        }
-
-        .navbar-modern .navbar-brand i {
-            margin-right: 8px;
-        }
-
-        .navbar-modern .nav-link {
-            font-weight: 500;
-            color: var(--text-dark) !important;
-            padding: 8px 16px !important;
-            border-radius: 30px;
-            transition: all 0.2s ease;
-        }
-
-        .navbar-modern .nav-link:hover {
-            background-color: var(--bg-light);
-            color: var(--primary) !important;
-        }
-
-        .navbar-modern .nav-link i {
-            margin-right: 6px;
-        }
-
-        .btn-primary-custom {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary-custom:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-outline-custom {
-            background: transparent;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline-custom:hover {
-            border-color: var(--text-dark);
-            background: var(--bg-light);
-        }
-
-        /* Dropdown user */
-        .user-dropdown .dropdown-toggle {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 6px 12px 6px 16px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-            background: white;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: var(--text-dark);
-        }
-
-        .user-dropdown .dropdown-toggle:hover {
-            box-shadow: var(--shadow-sm);
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-dropdown .dropdown-menu {
-            border-radius: 16px;
-            padding: 8px 0;
-            box-shadow: var(--shadow-lg);
-            border: none;
-            min-width: 220px;
-        }
-
-        .user-dropdown .dropdown-item {
-            padding: 10px 20px;
-            font-weight: 500;
-            color: var(--text-dark);
-            transition: all 0.2s ease;
-        }
-
-        .user-dropdown .dropdown-item:hover {
-            background: var(--bg-light);
-            color: var(--primary);
-        }
-
-        .user-dropdown .dropdown-item i {
-            width: 20px;
-            margin-right: 12px;
-            color: var(--text-light);
-        }
-
-        /* Alerts */
-        .alert-custom {
-            border-radius: 16px;
-            border: none;
-            padding: 16px 24px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Footer moderno */
-        .footer-modern {
-            background: white !important;
-            color: var(--text-dark) !important;
-            border-top: 1px solid var(--border-color);
-            padding: 48px 0 24px;
-            margin-top: 60px;
-        }
-
-        .footer-modern h5 {
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-        }
-
-        .footer-modern .text-muted {
-            color: var(--text-light) !important;
-        }
-
-        .footer-modern a {
-            color: var(--text-light) !important;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-modern a:hover {
-            color: var(--text-dark) !important;
-        }
-
-        .footer-modern .social-links a {
-            display: inline-block;
-            margin-right: 16px;
-            font-size: 1.3rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 991px) {
-            .navbar-modern .navbar-collapse {
-                padding: 16px 0;
-            }
-            .navbar-modern .nav-link {
-                padding: 10px 16px !important;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .navbar-modern .navbar-brand {
-                font-size: 1.2rem;
-            }
-            .btn-primary-custom, .btn-outline-custom {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar Moderno -->
-    <nav class="navbar navbar-expand-lg navbar-modern">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="fas fa-home"></i> MyHouseinCuban
-            </a>
-            
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand fw-bold text-primary" href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> MyHouseinCuban</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.search') }}">
-                            <i class="fas fa-search"></i> Buscar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about') }}">
-                            <i class="fas fa-info-circle"></i> Acerca de
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.contact') }}">
-                            <i class="fas fa-envelope"></i> Contacto
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.search') }}"><i class="fas fa-search"></i> Buscar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">Acerca de</a></li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.messages_inbox') }}"><i class="fas fa-envelope"></i> Mensajes</a></li>
+                    {% endif %}
                 </ul>
-                
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                        <li class="nav-item dropdown user-dropdown">
-                            <a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="user-avatar">{{ current_user.username[0]|upper }}</span>
-                                <span class="d-none d-md-inline">{{ current_user.username }}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> {{ current_user.username }}</a>
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 {% if current_user.is_admin() %}
-                                    <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt"></i> Panel Admin
-                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Panel Admin</a></li>
                                 {% else %}
-                                    <li><a class="dropdown-item" href="{{ url_for('seller.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt"></i> Panel Vendedor
-                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('seller.dashboard') }}">Panel Vendedor</a></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">
-                                    <i class="fas fa-user-cog"></i> Perfil
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
                             </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item me-2">
-                            <a class="btn btn-outline-custom" href="{{ url_for('auth.login') }}">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar sesión
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary-custom" href="{{ url_for('auth.register') }}">
-                                <i class="fas fa-user-plus"></i> Registrarse
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Iniciar sesión</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Registrarse</a></li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-    
-    <!-- Mensajes Flash -->
-    <div class="container mt-4">
+
+    <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-custom alert-dismissible fade show" role="alert">
-                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -314,64 +59,35 @@
             {% endif %}
         {% endwith %}
     </div>
-    
-    <!-- Contenido principal -->
+
     <main>{% block content %}{% endblock %}</main>
-    
-    <!-- Footer Moderno -->
-    <footer class="footer-modern">
+
+    <footer class="bg-dark text-white mt-5 py-4">
         <div class="container">
-            <div class="row g-4">
+            <div class="row">
                 <div class="col-md-4">
-                    <h5><i class="fas fa-home text-primary"></i> MyHouseinCuban</h5>
-                    <p class="text-muted">La plataforma líder para comprar y vender propiedades en Cuba. Conectamos personas con su hogar ideal.</p>
-                    <div class="social-links mt-3">
-                        <a href="#" class="text-muted"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-youtube"></i></a>
-                    </div>
+                    <h5>MyHouseinCuban</h5>
+                    <p>Encuentra tu hogar en Cuba.</p>
                 </div>
-                
-                <div class="col-md-2">
-                    <h5>Explorar</h5>
+                <div class="col-md-4">
+                    <h5>Enlaces</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.search') }}" class="text-muted">Buscar</a></li>
-                        <li><a href="#" class="text-muted">Destinos</a></li>
-                        <li><a href="#" class="text-muted">Tipos de alojamiento</a></li>
+                        <li><a href="{{ url_for('main.search') }}" class="text-white-50">Buscar</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white-50">Acerca de</a></li>
+                        <li><a href="{{ url_for('main.contact') }}" class="text-white-50">Contacto</a></li>
                     </ul>
                 </div>
-                
-                <div class="col-md-2">
-                    <h5>Información</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.about') }}" class="text-muted">Acerca de</a></li>
-                        <li><a href="{{ url_for('main.contact') }}" class="text-muted">Contacto</a></li>
-                        <li><a href="#" class="text-muted">Ayuda</a></li>
-                    </ul>
-                </div>
-                
                 <div class="col-md-4">
                     <h5>Contacto</h5>
-                    <ul class="list-unstyled text-muted">
-                        <li><i class="fas fa-envelope me-2"></i> info@myhouseincuban.com</li>
-                        <li><i class="fas fa-phone me-2"></i> +53 5 123 4567</li>
-                        <li><i class="fas fa-map-marker-alt me-2"></i> La Habana, Cuba</li>
-                    </ul>
+                    <p class="text-white-50">info@myhouseincuban.com</p>
                 </div>
             </div>
-            
-            <hr class="my-4">
-            
-            <div class="text-center text-muted small">
-                &copy; 2026 MyHouseinCuban. Todos los derechos reservados.
-            </div>
+            <hr class="bg-light">
+            <div class="text-center">&copy; 2026 MyHouseinCuban</div>
         </div>
     </footer>
-    
-    <!-- Scripts -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>

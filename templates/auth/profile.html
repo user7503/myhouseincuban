@@ -1,18 +1,24 @@
-{% extends "base.html" %}
-{% block title %}Mi perfil{% endblock %}
-{% block content %}
+{% extends "base.html" %}{% block title %}Perfil{% endblock %}{% block content %}
 <div class="container mt-4">
     <h2><i class="fas fa-user-cog"></i> Mi perfil</h2>
     <div class="row">
         <div class="col-md-6">
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3"><label>Nombre</label><input type="text" name="username" class="form-control" value="{{ current_user.username }}"></div>
                 <div class="mb-3"><label>Teléfono</label><input type="text" name="phone" class="form-control" value="{{ current_user.phone }}"></div>
                 <div class="mb-3"><label>Email</label><input type="email" class="form-control" value="{{ current_user.email }}" disabled></div>
                 <div class="mb-3"><label>Nueva contraseña</label><input type="password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiar"></div>
-                <div class="mb-3"><label>Confirmar contraseña</label><input type="password" name="confirm_password" class="form-control" placeholder="Repetir nueva contraseña"></div>
-                <button type="submit" class="btn btn-primary">Actualizar perfil</button>
+                <div class="mb-3"><label>Confirmar contraseña</label><input type="password" name="confirm_password" class="form-control" placeholder="Repetir"></div>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
             </form>
+        </div>
+        <div class="col-md-6">
+            <div class="card"><div class="card-body">
+                <h5>Plan: <span class="badge bg-info">{{ current_user.plan.name }}</span></h5>
+                <p>Propiedades: {{ current_user.properties_count }} / {{ current_user.plan.max_properties if current_user.plan.max_properties > 0 else 'Ilimitado' }}</p>
+                <a href="{{ url_for('seller.plans') }}" class="btn btn-outline-primary btn-sm">Cambiar plan</a>
+            </div></div>
         </div>
     </div>
 </div>

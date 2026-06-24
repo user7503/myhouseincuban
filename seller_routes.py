@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from decorators import seller_required
-from models import db, Property, PropertyImage, Message
+from models import db, Property, PropertyImage, Message, Conversation, Plan
 from forms import PropertyForm
 from utils import save_image, delete_image
-import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 seller_bp = Blueprint('seller', __name__)
 
@@ -17,23 +16,28 @@ def dashboard():
     available = Property.query.filter_by(user_id=current_user.id, status='Disponible').count()
     sold = Property.query.filter_by(user_id=current_user.id, status='Vendida').count()
     recent = Property.query.filter_by(user_id=current_user.id).order_by(Property.created_at.desc()).limit(5).all()
-    # Mensajes no leídos para las propiedades del vendedor
-    property_ids = [p.id for p in Property.query.filter_by(user_id=current_user.id).all()]
-    unread_messages = Message.query.filter(Message.property_id.in_(property_ids), Message.is_read == False).count()
-    return render_template('seller/dashboard.html', total=total, available=available, sold=sold, recent=recent, unread_messages=unread_messages)
+    unread = Message.query.join(Conversation).filter(
+        Conversation.seller_id == current_user.id,
+        Message.sender_id != current_user.id,
+        Message.is_read == False
+    ).count()
+    return render_template('seller/dashboard.html', total=total, available=available, sold=sold, recent=recent, unread_messages=unread)
 
 @seller_bp.route('/properties')
 @login_required
 @seller_required
 def properties():
     page = request.args.get('page', 1, type=int)
-    properties = Property.query.filter_by(user_id=current_user.id).order_by(Property.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
-    return render_template('seller/properties.html', properties=properties)
+    props = Property.query.filter_by(user_id=current_user.id).order_by(Property.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
+    return render_template('seller/properties.html', properties=props)
 
 @seller_bp.route('/property/create', methods=['GET', 'POST'])
 @login_required
 @seller_required
 def create_property():
+    if not current_user.can_publish_more():
+        flash('Límite de propiedades alcanzado. Actualiza tu plan.', 'warning')
+        return redirect(url_for('seller.plans'))
     form = PropertyForm()
     if form.validate_on_submit():
         prop = Property(
@@ -64,19 +68,17 @@ def create_property():
             user_id=current_user.id
         )
         if form.main_image.data:
-            path = save_image(form.main_image.data)
-            prop.main_image = path
+            prop.main_image = save_image(form.main_image.data)
         db.session.add(prop)
-        db.session.commit()
-        # Imágenes adicionales
+        db.session.flush()
         if form.additional_images.data:
             for img in form.additional_images.data:
                 if img:
-                    path = save_image(img)
-                    pi = PropertyImage(property_id=prop.id, image_path=path, is_main=False)
+                    pi = PropertyImage(property_id=prop.id, image_path=save_image(img))
                     db.session.add(pi)
-            db.session.commit()
-        flash('Propiedad creada exitosamente.', 'success')
+        current_user.properties_count += 1
+        db.session.commit()
+        flash('Propiedad creada.', 'success')
         return redirect(url_for('seller.properties'))
     return render_template('seller/create_property.html', form=form)
 
@@ -86,16 +88,14 @@ def create_property():
 def edit_property(id):
     prop = Property.query.get_or_404(id)
     if prop.user_id != current_user.id and not current_user.is_admin():
-        flash('No tienes permiso.', 'danger')
-        return redirect(url_for('seller.properties'))
+        abort(403)
     form = PropertyForm(obj=prop)
     if form.validate_on_submit():
         form.populate_obj(prop)
         if form.main_image.data:
             if prop.main_image:
                 delete_image(prop.main_image)
-            path = save_image(form.main_image.data)
-            prop.main_image = path
+            prop.main_image = save_image(form.main_image.data)
         db.session.commit()
         flash('Propiedad actualizada.', 'success')
         return redirect(url_for('seller.properties'))
@@ -107,40 +107,53 @@ def edit_property(id):
 def delete_property(id):
     prop = Property.query.get_or_404(id)
     if prop.user_id != current_user.id and not current_user.is_admin():
-        flash('No tienes permiso.', 'danger')
-        return redirect(url_for('seller.properties'))
-    # Eliminar imágenes
+        abort(403)
     if prop.main_image:
         delete_image(prop.main_image)
     for img in prop.images:
         delete_image(img.image_path)
+    current_user.properties_count = max(0, current_user.properties_count - 1)
     db.session.delete(prop)
     db.session.commit()
     flash('Propiedad eliminada.', 'success')
     return redirect(url_for('seller.properties'))
 
-@seller_bp.route('/messages')
+@seller_bp.route('/property/<int:id>/feature', methods=['POST'])
 @login_required
 @seller_required
-def messages():
-    page = request.args.get('page', 1, type=int)
-    property_ids = [p.id for p in Property.query.filter_by(user_id=current_user.id).all()]
-    # Si no tiene propiedades, mostrar vacío
-    if not property_ids:
-        return render_template('seller/messages.html', messages=[], pagination=None)
-    msgs = Message.query.filter(Message.property_id.in_(property_ids)).order_by(Message.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
-    return render_template('seller/messages.html', messages=msgs)
-
-@seller_bp.route('/message/<int:id>/read', methods=['POST'])
-@login_required
-@seller_required
-def mark_read(id):
-    msg = Message.query.get_or_404(id)
-    # Verificar que el mensaje pertenece a una propiedad del vendedor
-    if msg.property.user_id != current_user.id:
-        flash('Acceso no autorizado.', 'danger')
-        return redirect(url_for('seller.messages'))
-    msg.is_read = True
+def feature_property(id):
+    prop = Property.query.get_or_404(id)
+    if prop.user_id != current_user.id:
+        abort(403)
+    if not current_user.plan.can_feature:
+        flash('Tu plan no permite destacar.', 'warning')
+        return redirect(url_for('seller.plans'))
+    if prop.is_featured:
+        prop.is_featured = False
+        prop.featured_until = None
+        flash('Ya no está destacada.', 'info')
+    else:
+        prop.is_featured = True
+        prop.featured_until = datetime.utcnow() + timedelta(days=30)
+        flash('Propiedad destacada 30 días.', 'success')
     db.session.commit()
-    flash('Mensaje marcado como leído.', 'success')
-    return redirect(url_for('seller.messages'))
+    return redirect(url_for('seller.properties'))
+
+@seller_bp.route('/plans')
+@login_required
+@seller_required
+def plans():
+    plans = Plan.query.all()
+    return render_template('plans/plans.html', plans=plans)
+
+@seller_bp.route('/plans/upgrade/<int:plan_id>', methods=['POST'])
+@login_required
+@seller_required
+def upgrade_plan(plan_id):
+    plan = Plan.query.get_or_404(plan_id)
+    # Simula pago
+    current_user.plan_id = plan.id
+    current_user.subscription_expires = datetime.utcnow() + timedelta(days=30)
+    db.session.commit()
+    flash(f'Plan actualizado a {plan.name}.', 'success')
+    return redirect(url_for('seller.plans'))

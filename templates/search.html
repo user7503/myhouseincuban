@@ -2,58 +2,37 @@
 {% block title %}Buscar propiedades{% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h2><i class="fas fa-search"></i> Buscar propiedades</h2>
+    <h2><i class="fas fa-search"></i> Buscar</h2>
     <form method="GET" class="bg-light p-4 rounded shadow-sm mb-4">
         <div class="row g-3">
-            <div class="col-md-3"><input type="text" name="q" class="form-control" placeholder="Palabra clave" value="{{ request.args.get('q', '') }}"></div>
-            <div class="col-md-2">
-                <select name="type" class="form-select">
-                    <option value="">Tipo</option>
-                    {% for t in property_types %}<option value="{{ t }}" {% if request.args.get('type')==t %}selected{% endif %}>{{ t }}</option>{% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="province" class="form-select">
-                    <option value="">Provincia</option>
-                    {% for p in provinces %}<option value="{{ p }}" {% if request.args.get('province')==p %}selected{% endif %}>{{ p }}</option>{% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2"><input type="number" name="min_price" class="form-control" placeholder="Precio min" value="{{ request.args.get('min_price', '') }}"></div>
-            <div class="col-md-2"><input type="number" name="max_price" class="form-control" placeholder="Precio max" value="{{ request.args.get('max_price', '') }}"></div>
+            <div class="col-md-3"><input type="text" name="q" class="form-control" placeholder="Palabra clave" value="{{ request.args.get('q','') }}"></div>
+            <div class="col-md-2"><select name="type" class="form-select"><option value="">Tipo</option>{% for t in property_types %}<option value="{{ t }}" {% if request.args.get('type')==t %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></div>
+            <div class="col-md-2"><select name="province" class="form-select"><option value="">Provincia</option>{% for p in provinces %}<option value="{{ p }}" {% if request.args.get('province')==p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select></div>
+            <div class="col-md-2"><input type="number" name="min_price" class="form-control" placeholder="Precio min" value="{{ request.args.get('min_price','') }}"></div>
+            <div class="col-md-2"><input type="number" name="max_price" class="form-control" placeholder="Precio max" value="{{ request.args.get('max_price','') }}"></div>
             <div class="col-md-1"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i></button></div>
         </div>
         <div class="row mt-3 g-2">
-            <div class="col-md-2">
-                <select name="currency" class="form-select">
-                    <option value="">Moneda</option>
-                    {% for c in currencies %}<option value="{{ c }}" {% if request.args.get('currency')==c %}selected{% endif %}>{{ c }}</option>{% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2"><input type="number" name="bedrooms" class="form-control" placeholder="Habitaciones min" value="{{ request.args.get('bedrooms', '') }}"></div>
-            <div class="col-md-2"><input type="number" name="bathrooms" class="form-control" placeholder="Baños min" value="{{ request.args.get('bathrooms', '') }}"></div>
-            <div class="col-md-2">
-                <select name="sort" class="form-select">
-                    <option value="newest" {% if request.args.get('sort')=='newest' %}selected{% endif %}>Más reciente</option>
-                    <option value="price_asc" {% if request.args.get('sort')=='price_asc' %}selected{% endif %}>Precio menor</option>
-                    <option value="price_desc" {% if request.args.get('sort')=='price_desc' %}selected{% endif %}>Precio mayor</option>
-                </select>
-            </div>
+            <div class="col-md-2"><select name="currency" class="form-select"><option value="">Moneda</option>{% for c in currencies %}<option value="{{ c }}" {% if request.args.get('currency')==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div>
+            <div class="col-md-2"><input type="number" name="bedrooms" class="form-control" placeholder="Hab. min" value="{{ request.args.get('bedrooms','') }}"></div>
+            <div class="col-md-2"><input type="number" name="bathrooms" class="form-control" placeholder="Baños min" value="{{ request.args.get('bathrooms','') }}"></div>
+            <div class="col-md-2"><select name="sort" class="form-select"><option value="newest">Más reciente</option><option value="price_asc" {% if request.args.get('sort')=='price_asc' %}selected{% endif %}>Precio menor</option><option value="price_desc" {% if request.args.get('sort')=='price_desc' %}selected{% endif %}>Precio mayor</option></select></div>
         </div>
     </form>
-    
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for prop in properties %}
         <div class="col">
             <div class="card h-100 shadow-sm">
-                <img src="{{ url_for('static', filename=prop.main_image or 'img/default-property.jpg') }}" class="card-img-top" alt="{{ prop.title }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ url_for('static', filename=prop.main_image or 'img/default-property.jpg') }}" class="card-img-top" style="height:200px; object-fit:cover;">
                 <div class="card-body">
-                    <h5 class="card-title">{{ prop.title[:40] }}</h5>
-                    <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ prop.city }}, {{ prop.province }}</p>
+                    <h5 class="card-title">{{ prop.title[:35] }}</h5>
+                    <p class="text-muted">{{ prop.city }}, {{ prop.province }}</p>
                     <p class="fw-bold text-primary">${{ "%.2f"|format(prop.price) }} {{ prop.currency }}</p>
                     <p><span class="badge bg-secondary">{{ prop.property_type }}</span> <span class="badge bg-success">{{ prop.status }}</span></p>
                 </div>
-                <div class="card-footer bg-white">
-                    <a href="{{ url_for('main.property_detail', id=prop.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver detalles</a>
+                <div class="card-footer bg-white border-0">
+                    <a href="{{ url_for('main.property_detail', id=prop.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver</a>
                 </div>
             </div>
         </div>
@@ -61,7 +40,7 @@
         <div class="col-12"><div class="alert alert-info">No se encontraron propiedades.</div></div>
         {% endfor %}
     </div>
-    
+
     {% if pagination and pagination.pages > 1 %}
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
