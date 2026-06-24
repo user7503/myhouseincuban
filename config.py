@@ -13,7 +13,7 @@ class Config:
     ITEMS_PER_PAGE = 12
     CURRENCIES = ['USD', 'EUR', 'CUP', 'MLC']
     PROVINCES = [
-        'Pinar del Río', 'Artemisa', 'La Habana', 'Mayabeque', 
+        'Pinar del Río', 'Artemisa', 'La Habana', 'Mayabeque',
         'Matanzas', 'Cienfuegos', 'Villa Clara', 'Sancti Spíritus',
         'Ciego de Ávila', 'Camagüey', 'Las Tunas', 'Holguín',
         'Granma', 'Santiago de Cuba', 'Guantánamo', 'Isla de la Juventud'
