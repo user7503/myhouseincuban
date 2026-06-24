@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FloatField, IntegerField, SelectField, BooleanField, SubmitField, FileField
+from wtforms import StringField, TextAreaField, FloatField, IntegerField, SelectField, BooleanField, SubmitField, FileField, MultipleFileField
 from wtforms.validators import DataRequired, Email, Length, Optional, NumberRange
 from flask_wtf.file import FileAllowed
 from config import Config
@@ -30,4 +30,5 @@ class PropertyForm(FlaskForm):
     contact_phone = StringField('Teléfono de Contacto', validators=[Length(max=20)])
     contact_email = StringField('Email de Contacto', validators=[Optional(), Email(), Length(max=120)])
     main_image = FileField('Imagen Principal', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'Solo imágenes permitidas')])
+    additional_images = MultipleFileField('Imágenes Adicionales', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'Solo imágenes permitidas')])
     submit = SubmitField('Guardar Propiedad')

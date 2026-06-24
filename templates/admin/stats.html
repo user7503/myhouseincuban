@@ -1,14 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Stats - Admin{% endblock %}
+{% block title %}Estadísticas - Admin{% endblock %}
 {% block content %}
-<div class="container-fluid mt-4"><div class="row">
-<div class="col-md-2"><div class="card shadow"><div class="card-body"><h5 class="text-center mb-4">Panel Admin</h5>
-<div class="list-group">
-    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
-    <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action">Usuarios</a>
-    <a href="{{ url_for('admin.properties') }}" class="list-group-item list-group-item-action">Propiedades</a>
-    <a href="{{ url_for('admin.messages') }}" class="list-group-item list-group-item-action">Mensajes</a>
-</div></div></div></div>
-<div class="col-md-10"><h2>Stats</h2><p>Panel de stats</p></div>
-</div></div>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
+        <div class="col-md-10">
+            <h2>Estadísticas</h2>
+            <div class="row">
+                <div class="col-md-6"><h5>Propiedades por provincia</h5><ul>{% for p in properties_by_province %}<li>{{ p[0] }}: {{ p[1] }}</li>{% endfor %}</ul></div>
+                <div class="col-md-6"><h5>Propiedades por tipo</h5><ul>{% for t in properties_by_type %}<li>{{ t[0] }}: {{ t[1] }}</li>{% endfor %}</ul></div>
+            </div>
+            <h5>Más vistas</h5><ul>{% for p in most_viewed %}<li>{{ p.title }} - {{ p.views }} vistas</li>{% endfor %}</ul>
+        </div>
+    </div>
+</div>
 {% endblock %}

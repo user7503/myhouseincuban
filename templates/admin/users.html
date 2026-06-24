@@ -1,14 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Users - Admin{% endblock %}
+{% block title %}Usuarios - Admin{% endblock %}
 {% block content %}
-<div class="container-fluid mt-4"><div class="row">
-<div class="col-md-2"><div class="card shadow"><div class="card-body"><h5 class="text-center mb-4">Panel Admin</h5>
-<div class="list-group">
-    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
-    <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action">Usuarios</a>
-    <a href="{{ url_for('admin.properties') }}" class="list-group-item list-group-item-action">Propiedades</a>
-    <a href="{{ url_for('admin.messages') }}" class="list-group-item list-group-item-action">Mensajes</a>
-</div></div></div></div>
-<div class="col-md-10"><h2>Users</h2><p>Panel de users</p></div>
-</div></div>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
+        <div class="col-md-10">
+            <h2>Usuarios</h2>
+            <table class="table table-striped">
+                <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>{% for u in users.items %}<tr><td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{% if u.is_active %}✅ Activo{% else %}❌ Inactivo{% endif %}</td><td><form method="POST" action="{{ url_for('admin.toggle_user', id=u.id) }}" style="display:inline;"><button class="btn btn-sm btn-{% if u.is_active %}warning{% else %}success{% endif %}">{% if u.is_active %}Desactivar{% else %}Activar{% endif %}</button></form></td></tr>{% endfor %}</tbody>
+            </table>
+            <nav>{% for p in users.iter_pages() %}{% if p %}<a href="{{ url_for('admin.users', page=p) }}" class="btn btn-sm btn-outline-primary">{{ p }}</a>{% endif %}{% endfor %}</nav>
+        </div>
+    </div>
+</div>
 {% endblock %}

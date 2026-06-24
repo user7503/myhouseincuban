@@ -3,6 +3,75 @@
 {% block content %}
 <div class="container mt-4">
     <h2><i class="fas fa-search"></i> Buscar Propiedades</h2>
-    <p>Resultados de búsqueda...</p>
+    <form method="GET" class="row g-3 bg-light p-4 rounded shadow-sm mb-4">
+        <div class="col-md-3">
+            <input type="text" name="q" class="form-control" placeholder="Palabra clave" value="{{ request.args.get('q', '') }}">
+        </div>
+        <div class="col-md-2">
+            <select name="type" class="form-select">
+                <option value="">Tipo</option>
+                {% for t in property_types %}
+                    <option value="{{ t }}" {% if request.args.get('type') == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="province" class="form-select">
+                <option value="">Provincia</option>
+                {% for p in provinces %}
+                    <option value="{{ p }}" {% if request.args.get('province') == p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="min_price" class="form-control" placeholder="Precio min" value="{{ request.args.get('min_price', '') }}">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="max_price" class="form-control" placeholder="Precio max" value="{{ request.args.get('max_price', '') }}">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i></button>
+        </div>
+    </form>
+    
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename=property.main_image or 'img/default-property.jpg') }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ property.title[:40] }}</h5>
+                    <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.province }}</p>
+                    <p><strong class="text-primary">${{ "%.2f"|format(property.price) }} {{ property.currency }}</strong></p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ url_for('main.property_detail', id=property.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12"><div class="alert alert-info">No se encontraron propiedades con esos criterios.</div></div>
+        {% endfor %}
+    </div>
+    
+    {% if pagination.pages > 1 %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('main.search', page=pagination.prev_num, **request.args) }}">Anterior</a></li>
+            {% endif %}
+            {% for p in pagination.iter_pages() %}
+                {% if p %}
+                    <li class="page-item {% if p == pagination.page %}active{% endif %}"><a class="page-link" href="{{ url_for('main.search', page=p, **request.args) }}">{{ p }}</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+            {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('main.search', page=pagination.next_num, **request.args) }}">Siguiente</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}

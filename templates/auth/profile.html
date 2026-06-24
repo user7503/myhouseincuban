@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Mi Perfil{% endblock %}
 {% block content %}
-<div class="container mt-4"><h2>Mi Perfil</h2><p>Perfil de {{ current_user.username }}</p></div>
+<div class="container mt-4">
+    <h2>Mi Perfil</h2>
+    <form method="POST" class="row g-3">
+        <div class="col-md-6"><label>Nombre</label><input type="text" name="username" class="form-control" value="{{ current_user.username }}"></div>
+        <div class="col-md-6"><label>Teléfono</label><input type="text" name="phone" class="form-control" value="{{ current_user.phone }}"></div>
+        <div class="col-md-6"><label>Email</label><input type="email" class="form-control" value="{{ current_user.email }}" disabled></div>
+        <div class="col-md-6"><label>Nueva Contraseña</label><input type="password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiar"></div>
+        <div class="col-md-6"><label>Confirmar Contraseña</label><input type="password" name="confirm_password" class="form-control" placeholder="Repite la nueva contraseña"></div>
+        <div class="col-12"><button type="submit" class="btn btn-primary">Actualizar Perfil</button></div>
+    </form>
+</div>
 {% endblock %}

@@ -1,14 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Messages - Admin{% endblock %}
+{% block title %}Mensajes - Admin{% endblock %}
 {% block content %}
-<div class="container-fluid mt-4"><div class="row">
-<div class="col-md-2"><div class="card shadow"><div class="card-body"><h5 class="text-center mb-4">Panel Admin</h5>
-<div class="list-group">
-    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
-    <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action">Usuarios</a>
-    <a href="{{ url_for('admin.properties') }}" class="list-group-item list-group-item-action">Propiedades</a>
-    <a href="{{ url_for('admin.messages') }}" class="list-group-item list-group-item-action">Mensajes</a>
-</div></div></div></div>
-<div class="col-md-10"><h2>Messages</h2><p>Panel de messages</p></div>
-</div></div>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
+        <div class="col-md-10">
+            <h2>Mensajes</h2>
+            <ul class="list-group">{% for m in messages.items %}<li class="list-group-item"><strong>{{ m.sender_name }}</strong> ({{ m.sender_email }}) - {{ m.message[:100] }} <span class="badge bg-secondary">{{ m.created_at.strftime('%d/%m/%Y') }}</span></li>{% endfor %}</ul>
+        </div>
+    </div>
+</div>
 {% endblock %}

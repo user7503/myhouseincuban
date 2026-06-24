@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 from decorators import seller_required
-from models import db, Property, Message
+from models import db, Property, PropertyImage, Message
 from forms import PropertyForm
 from utils import save_image
 import os
@@ -53,6 +53,15 @@ def create_property():
             property.main_image = image_path
         db.session.add(property)
         db.session.commit()
+        
+        # Guardar imágenes adicionales
+        if form.additional_images.data:
+            for img in form.additional_images.data:
+                img_path = save_image(img)
+                extra = PropertyImage(property_id=property.id, image_path=img_path, is_main=False)
+                db.session.add(extra)
+            db.session.commit()
+        
         flash('Propiedad creada exitosamente!', 'success')
         return redirect(url_for('seller.properties'))
     return render_template('seller/create_property.html', form=form)
