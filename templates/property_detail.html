@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ property.title }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ property.title }}</h2>
+    <p>{{ property.description }}</p>
+    <h3 class="text-primary">${{ "%.2f"|format(property.price) }} {{ property.currency }}</h3>
+</div>
+{% endblock %}

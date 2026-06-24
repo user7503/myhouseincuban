@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Edit Property - Vendedor{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4"><div class="row">
+<div class="col-md-2"><div class="card shadow"><div class="card-body"><h5 class="text-center mb-4">Panel Vendedor</h5>
+<div class="list-group">
+    <a href="{{ url_for('seller.dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
+    <a href="{{ url_for('seller.properties') }}" class="list-group-item list-group-item-action">Mis Propiedades</a>
+    <a href="{{ url_for('seller.create_property') }}" class="list-group-item list-group-item-action">Nueva Propiedad</a>
+    <a href="{{ url_for('seller.messages') }}" class="list-group-item list-group-item-action">Mensajes</a>
+</div></div></div></div>
+<div class="col-md-10"><h2>Edit Property</h2><p>Panel de edit_property</p></div>
+</div></div>
+{% endblock %}

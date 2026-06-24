@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Registro{% endblock %}
+{% block content %}
+<div class="container mt-5"><div class="row justify-content-center"><div class="col-md-6"><div class="card shadow"><div class="card-body">
+<h3 class="text-center mb-4"><i class="fas fa-user-plus"></i> Registro</h3>
+<form method="POST">
+    <div class="mb-3"><input type="text" name="username" class="form-control" placeholder="Nombre completo" required></div>
+    <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+    <div class="mb-3"><input type="text" name="phone" class="form-control" placeholder="Teléfono"></div>
+    <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Contraseña" required></div>
+    <div class="mb-3"><input type="password" name="confirm_password" class="form-control" placeholder="Confirmar contraseña" required></div>
+    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+</form>
+<hr><div class="text-center"><p>¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia Sesión</a></p></div>
+</div></div></div></div></div>
+{% endblock %}
