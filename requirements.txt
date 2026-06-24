@@ -7,4 +7,4 @@ python-dotenv==1.0.0
 WTForms==3.0.1
 Werkzeug==2.3.7
 Pillow==11.0.0
-
+gunicorn==23.0.0
