@@ -17,6 +17,8 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     properties = db.relationship('Property', backref='owner', lazy=True)
+    favorites = db.relationship('Favorite', backref='user', lazy=True)
+    messages = db.relationship('Message', backref='recipient', lazy=True)  # mensajes recibidos (si el vendedor es el propietario)
     
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -62,6 +64,8 @@ class Property(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     images = db.relationship('PropertyImage', backref='property', lazy=True, cascade='all, delete-orphan')
+    favorites = db.relationship('Favorite', backref='property', lazy=True)
+    messages = db.relationship('Message', backref='property', lazy=True)
 
 class PropertyImage(db.Model):
     __tablename__ = 'property_images'
@@ -90,6 +94,10 @@ class Message(db.Model):
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Relación para saber a qué vendedor pertenece (a través de la propiedad)
+    @property
+    def recipient_id(self):
+        return self.property.user_id
 
 class SiteSettings(db.Model):
     __tablename__ = 'site_settings'

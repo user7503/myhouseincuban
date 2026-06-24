@@ -1,23 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - Admin{% endblock %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row">
-        <div class="col-md-2">
-            <div class="card shadow"><div class="card-body">
-                <h5 class="text-center mb-4">Panel Admin</h5>
-                <div class="list-group">
-                    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action active">Dashboard</a>
-                    <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action">Usuarios</a>
-                    <a href="{{ url_for('admin.properties') }}" class="list-group-item list-group-item-action">Propiedades</a>
-                    <a href="{{ url_for('admin.messages') }}" class="list-group-item list-group-item-action">Mensajes</a>
-                    <a href="{{ url_for('admin.stats') }}" class="list-group-item list-group-item-action">Estadísticas</a>
-                    <a href="{{ url_for('admin.settings') }}" class="list-group-item list-group-item-action">Configuración</a>
-                </div>
-            </div></div>
-        </div>
+        <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
         <div class="col-md-10">
-            <h2>Dashboard</h2>
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
             <div class="row">
                 <div class="col-md-3"><div class="card text-white bg-primary"><div class="card-body"><h5>Propiedades</h5><h3>{{ stats.total_properties }}</h3></div></div></div>
                 <div class="col-md-3"><div class="card text-white bg-success"><div class="card-body"><h5>Disponibles</h5><h3>{{ stats.available_properties }}</h3></div></div></div>
@@ -25,10 +16,45 @@
                 <div class="col-md-3"><div class="card text-white bg-info"><div class="card-body"><h5>Usuarios</h5><h3>{{ stats.total_users }}</h3></div></div></div>
             </div>
             <div class="row mt-4">
-                <div class="col-md-6"><h5>Últimas propiedades</h5><ul class="list-group">{% for p in recent_properties %}<li class="list-group-item">{{ p.title }} - {{ p.status }}</li>{% endfor %}</ul></div>
-                <div class="col-md-6"><h5>Últimos mensajes</h5><ul class="list-group">{% for m in recent_messages %}<li class="list-group-item">{{ m.sender_name }}: {{ m.message[:30] }}</li>{% endfor %}</ul></div>
+                <div class="col-md-6"><h5>Últimas propiedades</h5><ul class="list-group">{% for p in recent_properties %}<li class="list-group-item d-flex justify-content-between"><span>{{ p.title }}</span><span class="badge bg-secondary">{{ p.status }}</span></li>{% endfor %}</ul></div>
+                <div class="col-md-6"><h5>Últimos mensajes</h5><ul class="list-group">{% for m in recent_messages %}<li class="list-group-item">{{ m.sender_name }}: {{ m.message[:50] }}</li>{% endfor %}</ul></div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <canvas id="propertyChart" width="400" height="200"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="messageChart" width="400" height="200"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx1 = document.getElementById('propertyChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Total', 'Disponibles', 'Vendidas'],
+                datasets: [{
+                    label: 'Propiedades',
+                    data: [{{ stats.total_properties }}, {{ stats.available_properties }}, {{ stats.sold_properties }}],
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107']
+                }]
+            }
+        });
+        var ctx2 = document.getElementById('messageChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Leídos', 'No leídos'],
+                datasets: [{
+                    data: [{{ stats.total_messages - stats.unread_messages }}, {{ stats.unread_messages }}],
+                    backgroundColor: ['#28a745', '#dc3545']
+                }]
+            }
+        });
+    });
+</script>
 {% endblock %}

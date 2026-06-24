@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Estadísticas - Admin{% endblock %}
+{% block title %}Estadísticas{% endblock %}
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row">
@@ -7,8 +7,8 @@
         <div class="col-md-10">
             <h2>Estadísticas</h2>
             <div class="row">
-                <div class="col-md-6"><h5>Propiedades por provincia</h5><ul>{% for p in properties_by_province %}<li>{{ p[0] }}: {{ p[1] }}</li>{% endfor %}</ul></div>
-                <div class="col-md-6"><h5>Propiedades por tipo</h5><ul>{% for t in properties_by_type %}<li>{{ t[0] }}: {{ t[1] }}</li>{% endfor %}</ul></div>
+                <div class="col-md-6"><h5>Por provincia</h5><ul>{% for p in by_province %}<li>{{ p[0] }}: {{ p[1] }}</li>{% endfor %}</ul></div>
+                <div class="col-md-6"><h5>Por tipo</h5><ul>{% for t in by_type %}<li>{{ t[0] }}: {{ t[1] }}</li>{% endfor %}</ul></div>
             </div>
             <h5>Más vistas</h5><ul>{% for p in most_viewed %}<li>{{ p.title }} - {{ p.views }} vistas</li>{% endfor %}</ul>
         </div>

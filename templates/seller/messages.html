@@ -1,12 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Mensajes - Vendedor{% endblock %}
+{% block title %}Mensajes recibidos{% endblock %}
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-2">{% include 'seller/_sidebar.html' %}</div>
         <div class="col-md-10">
-            <h2>Mensajes</h2>
-            <ul class="list-group">{% for m in messages.items %}<li class="list-group-item"><strong>{{ m.sender_name }}</strong> ({{ m.sender_email }}) - {{ m.message[:100] }}</li>{% endfor %}</ul>
+            <h2><i class="fas fa-envelope"></i> Mensajes recibidos</h2>
+            {% if messages and messages.items %}
+                <ul class="list-group">
+                    {% for m in messages.items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>{{ m.sender_name }}</strong> ({{ m.sender_email }})
+                            <br><small>Teléfono: {{ m.sender_phone or 'No especificado' }}</small>
+                            <br><small>Propiedad: <a href="{{ url_for('main.property_detail', id=m.property_id) }}">{{ m.property.title }}</a></small>
+                            <br>{{ m.message }}
+                            <br><small class="text-muted">{{ m.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-{% if m.is_read %}success{% else %}danger{% endif %}">{% if m.is_read %}Leído{% else %}No leído{% endif %}</span>
+                            {% if not m.is_read %}
+                            <form method="POST" action="{{ url_for('seller.mark_read', id=m.id) }}" style="display:inline;">
+                                <button class="btn btn-sm btn-outline-primary">Marcar como leído</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <nav>{% for p in messages.iter_pages() %}{% if p %}<a href="{{ url_for('seller.messages', page=p) }}" class="btn btn-sm btn-outline-primary">{{ p }}</a>{% endif %}{% endfor %}</nav>
+            {% else %}
+                <div class="alert alert-info">No tienes mensajes.</div>
+            {% endif %}
         </div>
     </div>
 </div>

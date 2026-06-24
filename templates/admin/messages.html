@@ -1,12 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Mensajes - Admin{% endblock %}
+{% block title %}Mensajes{% endblock %}
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-2">{% include 'admin/_sidebar.html' %}</div>
         <div class="col-md-10">
             <h2>Mensajes</h2>
-            <ul class="list-group">{% for m in messages.items %}<li class="list-group-item"><strong>{{ m.sender_name }}</strong> ({{ m.sender_email }}) - {{ m.message[:100] }} <span class="badge bg-secondary">{{ m.created_at.strftime('%d/%m/%Y') }}</span></li>{% endfor %}</ul>
+            <ul class="list-group">
+                {% for m in messages.items %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>{{ m.sender_name }}</strong> ({{ m.sender_email }})
+                        <br><small>Propiedad: <a href="{{ url_for('main.property_detail', id=m.property_id) }}">{{ m.property.title }}</a></small>
+                        <br>{{ m.message }}
+                    </div>
+                    <span class="badge bg-{% if m.is_read %}success{% else %}danger{% endif %}">{% if m.is_read %}Leído{% else %}No leído{% endif %}</span>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>

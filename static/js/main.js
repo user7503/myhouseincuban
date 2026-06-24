@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Auto-cerrar alertas
     setTimeout(function() {
         document.querySelectorAll('.alert').forEach(function(alert) {
-            new bootstrap.Alert(alert).close();
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
         });
     }, 5000);
 });

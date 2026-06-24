@@ -1,36 +1,36 @@
 {% extends "base.html" %}
 {% block title %}MyHouseinCuban - Encuentra tu hogar en Cuba{% endblock %}
 {% block content %}
-<div class="hero-section bg-primary text-white py-5">
+<div class="hero-section bg-primary text-white py-5" style="background: linear-gradient(135deg, #0056b3 0%, #003d80 100%);">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h1 class="display-4 fw-bold">Encuentra tu hogar ideal en Cuba</h1>
-                <p class="lead">Descubre las mejores propiedades en toda la isla.</p>
-                <a href="{{ url_for('main.search') }}" class="btn btn-light btn-lg"><i class="fas fa-search"></i> Buscar Propiedades</a>
+                <p class="lead">Las mejores propiedades en toda la isla, al alcance de tu mano.</p>
+                <a href="{{ url_for('main.search') }}" class="btn btn-light btn-lg"><i class="fas fa-search"></i> Buscar ahora</a>
             </div>
             <div class="col-md-6 text-center">
-                <i class="fas fa-home" style="font-size: 200px; opacity: 0.3;"></i>
+                <i class="fas fa-home" style="font-size: 200px; opacity: 0.2;"></i>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container mt-4">
-    <div class="card shadow">
+    <div class="card shadow-sm">
         <div class="card-body">
             <form action="{{ url_for('main.search') }}" method="GET" class="row g-3">
-                <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Buscar..."></div>
+                <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="¿Dónde quieres vivir?"></div>
                 <div class="col-md-3">
                     <select name="type" class="form-select">
                         <option value="">Todos los tipos</option>
-                        {% for type in property_types_list %}<option value="{{ type }}">{{ type }}</option>{% endfor %}
+                        {% for t in property_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
                     <select name="province" class="form-select">
                         <option value="">Todas las provincias</option>
-                        {% for province in provinces %}<option value="{{ province }}">{{ province }}</option>{% endfor %}
+                        {% for p in provinces %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
                     </select>
                 </div>
                 <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Buscar</button></div>
@@ -39,21 +39,21 @@
     </div>
 </div>
 
-{% if featured_properties %}
+{% if featured %}
 <div class="container mt-5">
-    <h2 class="mb-4"><i class="fas fa-star text-warning"></i> Propiedades Destacadas</h2>
-    <div class="row">
-        {% for property in featured_properties %}
-        <div class="col-md-3 mb-4">
+    <h2 class="mb-4"><i class="fas fa-star text-warning"></i> Propiedades destacadas</h2>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for prop in featured %}
+        <div class="col">
             <div class="card h-100 shadow-sm">
-                <img src="{{ url_for('static', filename=property.main_image or 'img/default-property.jpg') }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ url_for('static', filename=prop.main_image or 'img/default-property.jpg') }}" class="card-img-top" alt="{{ prop.title }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                    <h5 class="card-title">{{ property.title[:50] }}</h5>
-                    <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ property.city }}</p>
-                    <p><strong class="text-primary">${{ "%.2f"|format(property.price) }} {{ property.currency }}</strong></p>
+                    <h5 class="card-title">{{ prop.title[:40] }}</h5>
+                    <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ prop.city }}</p>
+                    <p class="fw-bold text-primary">${{ "%.2f"|format(prop.price) }} {{ prop.currency }}</p>
                 </div>
                 <div class="card-footer bg-white">
-                    <a href="{{ url_for('main.property_detail', id=property.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver Detalles</a>
+                    <a href="{{ url_for('main.property_detail', id=prop.id) }}" class="btn btn-outline-primary btn-sm w-100">Ver detalles</a>
                 </div>
             </div>
         </div>

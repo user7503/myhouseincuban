@@ -1,7 +1,14 @@
-body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; }
-.hero-section { background: linear-gradient(135deg, #0056b3 0%, #003d80 100%); min-height: 300px; display: flex; align-items: center; }
-.card { transition: transform 0.3s; border: none; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.footer a { text-decoration: none; }
-.footer a:hover { text-decoration: underline; }
+/* Estilos modernos inspirados en Airbnb */
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f7f7; }
+.hero-section { min-height: 300px; display: flex; align-items: center; }
+.card { border: none; transition: transform 0.2s, box-shadow 0.2s; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+.navbar { background-color: #ffffff !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.navbar-brand { font-weight: 700; }
+.btn-primary { background-color: #ff5a5f; border-color: #ff5a5f; }
+.btn-primary:hover { background-color: #e0484d; border-color: #e0484d; }
+.text-primary { color: #ff5a5f !important; }
+.bg-primary { background-color: #ff5a5f !important; }
+.list-group-item.active { background-color: #ff5a5f; border-color: #ff5a5f; }
+footer a { text-decoration: none; }
+footer a:hover { text-decoration: underline; }
